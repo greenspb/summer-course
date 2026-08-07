@@ -185,9 +185,7 @@ def delete_gist(token: str, gist_id: str) -> bool:
 
 if __name__=='__main__':
     import pytest
-
     PROBLEM_NUMBER = 4
-
     if PROBLEM_NUMBER == 1:
         def test_recursive_squares():
             assert recursive_squares(1) == [1]
@@ -365,4 +363,4 @@ if __name__=='__main__':
             success = delete_gist(GITHUB_TOKEN, gist_id)
             print(f"Deleted: {success}")
 
-        #example_usage()
+            #example_usage()
