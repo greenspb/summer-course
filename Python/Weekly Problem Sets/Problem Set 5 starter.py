@@ -3,7 +3,9 @@ import os
 
 #Problem 1 - Basic Recursion
 def recursive_squares(n: int) -> list[int]:
-    if n==1:
+    if n == 0:
+        return []
+    if n == 1:
         return [n**2]
     if n > 1:
         return recursive_squares(n-1) + [n**2] 
@@ -131,6 +133,10 @@ def search_movie(api_key: str, query: str) -> dict:
     headers = {"Authorization": f"Bearer {api_key}"}
     response = requests.get(url=url, headers=headers, params={'query': query})
     if response.status_code != 200:
+        try:
+            response.json()['results'][0]
+        except Exception:
+            return {}
         return {}
     return response.json()['results'][0]
 
