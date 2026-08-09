@@ -43,15 +43,34 @@ greet("world")
 
 2. Run `black` on the messy.py file.
 
+```bash
+black messy.py
+```
+
 ✅ *Check*: The file should now be properly formatted with consistent indentation and spacing.
 
 🎯 *Extra*:  config VS Code to use black as its autoformatter on python files.
+
+```
+#Open VS Code Settings <Ctrl + ,>. Searcher 'formatter'. Options: formatter, autosave.
+```
+
 
 ---
 
 ### Exercise 2: Format an Entire Directory
 
 **Goal**: Use `black` to format all `.py` files in a project.
+
+```bash
+#black . #Formats all files in folder, including subdirectories.
+# #Formats all .py files in folder.
+black bad_style.py
+black helper.py
+black problems.py
+black utils/alpha.py
+black utils/beta.py 
+```
 
 1. Inspect the remaining files and observe how they change after running black on the entire directory.
 
@@ -65,9 +84,17 @@ greet("world")
 
 1. Run `pylint` on `bad_style.py`.
 
+```bash
+pylint bad_style.py
+```
+
 ✅ *Check*: You'll receive a score and detailed output for code quality, style, and possible bugs.
 
 🎯 *Extra*:  Run pylint on the whole directory
+
+```bash
+pylint .
+```
 
 ---
 
@@ -77,10 +104,19 @@ greet("world")
 
 1. Run `mypy` on `bad_style.py` to check for type-related issues.
 
+```bash
+mypy bad_style.py
+```
+
 ✅ *Check*: You should see output indicating any type errors or warnings in the code.
 
 🎯 *Extra*: Try adding type hints to fix some of the errors and run mypy again.
 
+```python
+def get_length(items: list) -> str
+    count: str = str(len(items))
+    return count
+```
 ---
 
 ### Exercise 5: Format and Lint as a Pre-Commit Hook
@@ -91,7 +127,16 @@ First, read sections 1 through 7 of this [pre-commit guide](https://gist.github.
 
 1. Create a `.pre-commit-config.yaml` file with a configuration that includes the black formatter and mypy for type checking.
 
+```bash
+pre-commit {'repos': ['repo': 'https://github.com/greenspb/summer-course.git']} > .pre-commit-config.yaml
+```
+
 2. Install and run the pre-commit hooks. Note the output of the command.
+
+```bash
+pre-commit install
+pre-commit run --all-files
+```
 
 3. Run the hooks again, did the output change?
 

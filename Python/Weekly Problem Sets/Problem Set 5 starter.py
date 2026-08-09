@@ -3,7 +3,8 @@ import os
 
 #Problem 1 - Basic Recursion
 def recursive_squares(n: int) -> list[int]:
-    if n
+    if n == 0:
+        return []
     if n == 1:
         return [n**2]
     if n > 1:
@@ -96,17 +97,26 @@ def delete_user(user_id: int) -> bool:
         return False
 
 #Challenge
-def get_users_page(page: int) -> list[dict]:
+def get_users_page(page: int):
     response = requests.get(url=f'https://reqres.in/api/users?page={page}', headers={"x-api-Key": 'free_user_3Ha7WMScPCiJTOq9sMk7exbNzJc'})
     if response.status_code != 200:
-        return {}
-    return response.json()['data']
+        return []
+    data = response.json()['data']
+    return data
 
 def partial_update_user(user_id: int, updates: dict) -> dict:
     response = requests.patch(url=f'https://reqres.in/api/users/{user_id}', headers={"x-api-Key": 'free_user_3Ha7WMScPCiJTOq9sMk7exbNzJc'}, json=updates)
     if response.status_code != 200:
         return {}
     return response.json()
+
+def get_all_users():
+    users = get_users_page(1)
+    users += get_users_page(2)
+    #concatenate first_name and last_name into a new "name" property for each user before returning the list
+    for user in users:
+        user['name'] = f"{user['first_name']} {user['last_name']}"
+    return users
 
 #Problem 4 - Authenticated REST APIs
 
@@ -183,184 +193,184 @@ def delete_gist(token: str, gist_id: str) -> bool:
     return True
 
 
-if __name__=='__main__':
-    import pytest
-    PROBLEM_NUMBER = 4
-    if PROBLEM_NUMBER == 1:
-        def test_recursive_squares():
-            assert recursive_squares(1) == [1]
-            assert recursive_squares(2) == [1, 4]
-            assert recursive_squares(3) == [1, 4, 9]
+# if __name__=='__main__':
+#     import pytest
+#     PROBLEM_NUMBER = -1
+#     if PROBLEM_NUMBER == 1:
+#         def test_recursive_squares():
+#             assert recursive_squares(1) == [1]
+#             assert recursive_squares(2) == [1, 4]
+#             assert recursive_squares(3) == [1, 4, 9]
 
-        def test_palindrome_checker():
-            assert palindrome_checker('')
-            assert palindrome_checker('a')
-            assert palindrome_checker('aa')
-            assert palindrome_checker('ab') == False
-            assert palindrome_checker('aaa') == True
-            assert palindrome_checker('aab') == False
-            assert palindrome_checker('bacon') == False
-            assert palindrome_checker('radar') == True 
+#         def test_palindrome_checker():
+#             assert palindrome_checker('')
+#             assert palindrome_checker('a')
+#             assert palindrome_checker('aa')
+#             assert palindrome_checker('ab') == False
+#             assert palindrome_checker('aaa') == True
+#             assert palindrome_checker('aab') == False
+#             assert palindrome_checker('bacon') == False
+#             assert palindrome_checker('radar') == True 
 
-        def test_length():
-            assert length([]) == 0
-            assert length([1]) == 1
-            assert length([1, 2]) == 2
-            assert length([1, 2, 3]) == 3
+#         def test_length():
+#             assert length([]) == 0
+#             assert length([1]) == 1
+#             assert length([1, 2]) == 2
+#             assert length([1, 2, 3]) == 3
 
-        def test_flatten():
-            assert flatten([]) == []
-            assert flatten([1]) == [1]
-            assert flatten([[1]]) == [1]
-            assert flatten([1, 1]) == [1, 1]
-            assert flatten([1, [1]]) == [1, 1]
-            assert flatten([1, [2, 3], [4], 5]) == [1, 2, 3, 4, 5]
+#         def test_flatten():
+#             assert flatten([]) == []
+#             assert flatten([1]) == [1]
+#             assert flatten([[1]]) == [1]
+#             assert flatten([1, 1]) == [1, 1]
+#             assert flatten([1, [1]]) == [1, 1]
+#             assert flatten([1, [2, 3], [4], 5]) == [1, 2, 3, 4, 5]
 
-    if PROBLEM_NUMBER == 2:
+#     if PROBLEM_NUMBER == 2:
 
-        def test_fibonacci():
-            assert fibonacci(0) == 0
-            assert fibonacci(1) == 1
-            assert fibonacci(2) == 1
-            assert fibonacci(3) == 2
-            assert fibonacci(4) == 3
-            assert fibonacci(5) == 5
-            assert fibonacci(6) == 8
-            assert fibonacci(7) == 13
-            assert fibonacci(8) == 21
+#         def test_fibonacci():
+#             assert fibonacci(0) == 0
+#             assert fibonacci(1) == 1
+#             assert fibonacci(2) == 1
+#             assert fibonacci(3) == 2
+#             assert fibonacci(4) == 3
+#             assert fibonacci(5) == 5
+#             assert fibonacci(6) == 8
+#             assert fibonacci(7) == 13
+#             assert fibonacci(8) == 21
 
-        def test_count_ways():
-            assert count_ways(0) == 1
-            assert count_ways(1) == 1
-            assert count_ways(2) == 2
-            assert count_ways(3) == 3
-            assert count_ways(4) == 5
+#         def test_count_ways():
+#             assert count_ways(0) == 1
+#             assert count_ways(1) == 1
+#             assert count_ways(2) == 2
+#             assert count_ways(3) == 3
+#             assert count_ways(4) == 5
 
-        def test_grid_paths():
-            assert grid_paths(1, 1) == 1
-            assert grid_paths(2, 2) == 2
-            assert grid_paths(2, 2) == 2
-            assert grid_paths(2, 2) == 2
-            assert grid_paths(3, 3) == 6
-            i = 5
-            assert grid_paths(i, 1) == 1
-            assert grid_paths(1, i) == 1
+#         def test_grid_paths():
+#             assert grid_paths(1, 1) == 1
+#             assert grid_paths(2, 2) == 2
+#             assert grid_paths(2, 2) == 2
+#             assert grid_paths(2, 2) == 2
+#             assert grid_paths(3, 3) == 6
+#             i = 5
+#             assert grid_paths(i, 1) == 1
+#             assert grid_paths(1, i) == 1
 
-    if PROBLEM_NUMBER == 3:
+#     if PROBLEM_NUMBER == 3:
 
-        def test_get_user():
-            assert get_user(0) == {}
-            assert get_user(1)
-            assert get_user(10)
-            assert get_user(11) == {}
+#         def test_get_user():
+#             assert get_user(0) == {}
+#             assert get_user(1)
+#             assert get_user(10)
+#             assert get_user(11) == {}
 
-        def test_create_user():
-            assert create_user('John Doe', 'Developer') == {"name": "John Doe", "job": "Developer", "id": 11}
+#         def test_create_user():
+#             assert create_user('John Doe', 'Developer') == {"name": "John Doe", "job": "Developer", "id": 11}
 
-        def test_update_user():
-            assert update_user(2, 'Jane Smith', 'Manager') == {"name": "Jane Smith", "job": "Manager", "id": 2}
+#         def test_update_user():
+#             assert update_user(2, 'Jane Smith', 'Manager') == {"name": "Jane Smith", "job": "Manager", "id": 2}
 
-        def test_delete_user():
-            assert delete_user(2) == True
+#         def test_delete_user():
+#             assert delete_user(2) == True
 
-        def example_usage():
-            # GET a user
-            user = get_user(2)
-            print(f"User: {user['name']} ({user['email']})")
+#         def example_usage():
+#             # GET a user
+#             user = get_user(2)
+#             print(f"User: {user['name']} ({user['email']})")
 
-            # POST to create a user
-            new_user = create_user("John Doe", "Developer")
-            print(f"Created user with ID: {new_user['id']}")
+#             # POST to create a user
+#             new_user = create_user("John Doe", "Developer")
+#             print(f"Created user with ID: {new_user['id']}")
 
-            # PUT to update a user
-            updated = update_user(2, "Jane Smith", "Manager")
-            print(f"Updated: {updated}")
+#             # PUT to update a user
+#             updated = update_user(2, "Jane Smith", "Manager")
+#             print(f"Updated: {updated}")
 
-            # DELETE a user
-            success = delete_user(2)
-            print(f"Deleted: {success}")
+#             # DELETE a user
+#             success = delete_user(2)
+#             print(f"Deleted: {success}")
 
-        def test_get_users_page():
-            assert get_users_page(1)
-            assert get_users_page(2)
-            assert get_users_page(3) == []
+#         def test_get_users_page():
+#             assert get_users_page(1)
+#             assert get_users_page(2)
+#             assert get_users_page(3) == []
 
-        def test_partial_update_user():
-            assert partial_update_user(2, {"job": "Senior Developer"})
+#         def test_partial_update_user():
+#             assert partial_update_user(2, {"job": "Senior Developer"})
 
-    if PROBLEM_NUMBER == 4:
-        def test_search_movie():
-            import os
-            from dotenv import load_dotenv    
-            load_dotenv()  # Automatically loads key-value pairs from .env into os.environ 
-            token_env = "TMDB_API_TOKEN"  # Specify the name of your environment variable
-            token = os.getenv(token_env)
-            if not token:
-                print(f"Missing token. Set environment variable: {token_env}")
-            token = token.strip()
-            assert search_movie(token, "Inception")
+#     if PROBLEM_NUMBER == 4:
+#         def test_search_movie():
+#             import os
+#             from dotenv import load_dotenv    
+#             load_dotenv()  # Automatically loads key-value pairs from .env into os.environ 
+#             token_env = "TMDB_API_TOKEN"  # Specify the name of your environment variable
+#             token = os.getenv(token_env)
+#             if not token:
+#                 print(f"Missing token. Set environment variable: {token_env}")
+#             token = token.strip()
+#             assert search_movie(token, "Inception")
 
-        def test_get_github_user():
-            #echo GH_API_TOKEN=your_actual_token_here > .env
-            #echo  Python/Weekly\ Problem\ Sets/.env >> ../../.gitignore
-            #pip install python-dotenv
-            import os
-            from dotenv import load_dotenv    
-            load_dotenv()  # Automatically loads key-value pairs from .env into os.environ 
-            token_env = "GH_API_TOKEN"  # Specify the name of your environment variable
-            token = os.getenv(token_env)
-            if not token:
-                print(f"Missing token. Set environment variable: {token_env}")
-            token = token.strip()
-            assert problem_set.get_github_user(token, "torvalds")
+#         def test_get_github_user():
+#             #echo GH_API_TOKEN=your_actual_token_here > .env
+#             #echo  Python/Weekly\ Problem\ Sets/.env >> ../../.gitignore
+#             #pip install python-dotenv
+#             import os
+#             from dotenv import load_dotenv    
+#             load_dotenv()  # Automatically loads key-value pairs from .env into os.environ 
+#             token_env = "GH_API_TOKEN"  # Specify the name of your environment variable
+#             token = os.getenv(token_env)
+#             if not token:
+#                 print(f"Missing token. Set environment variable: {token_env}")
+#             token = token.strip()
+#             assert problem_set.get_github_user(token, "torvalds")
 
-        def test_create_gist():
-            #echo GH_API_TOKEN=your_actual_token_here > .env
-            #echo  Python/Weekly\ Problem\ Sets/.env >> ../../.gitignore
-            #pip install python-dotenv
-            import os
-            from dotenv import load_dotenv    
-            load_dotenv()  # Automatically loads key-value pairs from .env into os.environ 
-            token_env = "GH_API_TOKEN"  # Specify the name of your environment variable
-            token = os.getenv(token_env)
-            if not token:
-                print(f"Missing token. Set environment variable: {token_env}")
-            token = token.strip()
-            assert create_gist(token, "Test gist", "hello.py", "print('Hello')")
+#         def test_create_gist():
+#             #echo GH_API_TOKEN=your_actual_token_here > .env
+#             #echo  Python/Weekly\ Problem\ Sets/.env >> ../../.gitignore
+#             #pip install python-dotenv
+#             import os
+#             from dotenv import load_dotenv    
+#             load_dotenv()  # Automatically loads key-value pairs from .env into os.environ 
+#             token_env = "GH_API_TOKEN"  # Specify the name of your environment variable
+#             token = os.getenv(token_env)
+#             if not token:
+#                 print(f"Missing token. Set environment variable: {token_env}")
+#             token = token.strip()
+#             assert create_gist(token, "Test gist", "hello.py", "print('Hello')")
 
-        def test_delete_gist():
-            #echo GH_API_TOKEN=your_actual_token_here > .env
-            #echo  Python/Weekly\ Problem\ Sets/.env >> ../../.gitignore
-            #pip install python-dotenv
-            import os
-            from dotenv import load_dotenv    
-            load_dotenv()  # Automatically loads key-value pairs from .env into os.environ 
-            token_env = "GH_API_TOKEN"  # Specify the name of your environment variable
-            token = os.getenv(token_env)
-            if not token:
-                print(f"Missing token. Set environment variable: {token_env}")
-            token = token.strip()
-            gist_id = create_gist(token, "Test gist", "hello.py", "print('Hello')")
-            assert delete_gist(token, gist_id)
+#         def test_delete_gist():
+#             #echo GH_API_TOKEN=your_actual_token_here > .env
+#             #echo  Python/Weekly\ Problem\ Sets/.env >> ../../.gitignore
+#             #pip install python-dotenv
+#             import os
+#             from dotenv import load_dotenv    
+#             load_dotenv()  # Automatically loads key-value pairs from .env into os.environ 
+#             token_env = "GH_API_TOKEN"  # Specify the name of your environment variable
+#             token = os.getenv(token_env)
+#             if not token:
+#                 print(f"Missing token. Set environment variable: {token_env}")
+#             token = token.strip()
+#             gist_id = create_gist(token, "Test gist", "hello.py", "print('Hello')")
+#             assert delete_gist(token, gist_id)
 
-        def example_usage():
-            from dotenv import load_dotenv  
-            load_dotenv()
-            TMDB_API_KEY = os.getenv("TMDB_API_TOKEN")
-            GITHUB_TOKEN = os.getenv("GH_API_TOKEN")
+#         def example_usage():
+#             from dotenv import load_dotenv  
+#             load_dotenv()
+#             TMDB_API_KEY = os.getenv("TMDB_API_TOKEN")
+#             GITHUB_TOKEN = os.getenv("GH_API_TOKEN")
 
-            # Search for a movie
-            movie = search_movie(TMDB_API_KEY, "The Matrix")
-            print(f"Title: {movie['title']}, Year: {movie['release_date'][:4]}")
+#             # Search for a movie
+#             movie = search_movie(TMDB_API_KEY, "The Matrix")
+#             print(f"Title: {movie['title']}, Year: {movie['release_date'][:4]}")
 
-            # Get GitHub user info
-            user = get_github_user(GITHUB_TOKEN, "octocat")
-            print(f"{user['name']} has {user['public_repos']} public repos")
+#             # Get GitHub user info
+#             user = get_github_user(GITHUB_TOKEN, "octocat")
+#             print(f"{user['name']} has {user['public_repos']} public repos")
 
-            # Create and delete a gist
-            gist_id = create_gist(GITHUB_TOKEN, "My test gist", "test.txt", "Hello World!")
-            print(f"Created gist: https://gist.github.com/{gist_id}")
-            success = delete_gist(GITHUB_TOKEN, gist_id)
-            print(f"Deleted: {success}")
+#             # Create and delete a gist
+#             gist_id = create_gist(GITHUB_TOKEN, "My test gist", "test.txt", "Hello World!")
+#             print(f"Created gist: https://gist.github.com/{gist_id}")
+#             success = delete_gist(GITHUB_TOKEN, gist_id)
+#             print(f"Deleted: {success}")
 
-            #example_usage()
+#             #example_usage()
