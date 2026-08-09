@@ -181,7 +181,7 @@ def create_gist(token: str, description: str, filename: str, content: str) -> st
     }
     response = requests.post(url=url, headers=headers, json=json)
     if response.status_code != 201:
-        return ''
+        return ""
     return response.json()['id']
 
 def delete_gist(token: str, gist_id: str) -> bool:
