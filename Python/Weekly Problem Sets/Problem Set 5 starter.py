@@ -181,8 +181,8 @@ def create_gist(token: str, description: str, filename: str, content: str) -> st
     }
     response = requests.post(url=url, headers=headers, json=json)
     if response.status_code != 201:
-        return ""
-    return response.json()['id']
+        return ''
+    return response.json().get('id', '')
 
 def delete_gist(token: str, gist_id: str) -> bool:
     url = f'https://api.github.com/gists/{gist_id}' 
