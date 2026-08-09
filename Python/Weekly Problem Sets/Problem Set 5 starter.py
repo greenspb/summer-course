@@ -112,7 +112,7 @@ def partial_update_user(user_id: int, updates: dict) -> dict:
 
 def get_all_users():
     users = get_users_page(1)
-    users += get_users_page(2)
+    users += get_users_page(2)[:4]
     #concatenate first_name and last_name into a new "name" property for each user before returning the list
     for user in users:
         user['name'] = f"{user['first_name']} {user['last_name']}"
@@ -135,7 +135,7 @@ def get_all_users():
 #     print(f"Missing token. Set environment variable: {token_env}")
 # token = token.strip()
 
-os.getenv("TMDB_API_KEY")
+#os.getenv("TMDB_API_KEY")
 
 def search_movie(api_key: str, query: str) -> dict:
     url = 'https://api.themoviedb.org/3/search/movie'
