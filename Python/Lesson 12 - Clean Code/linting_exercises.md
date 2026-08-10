@@ -43,15 +43,34 @@ greet("world")
 
 2. Run `black` on the messy.py file.
 
+```bash
+black messy.py
+```
+
 ✅ *Check*: The file should now be properly formatted with consistent indentation and spacing.
 
 🎯 *Extra*:  config VS Code to use black as its autoformatter on python files.
+
+```
+#Open VS Code Settings <Ctrl + ,>. Searcher 'formatter'. Options: formatter, autosave.
+```
+
 
 ---
 
 ### Exercise 2: Format an Entire Directory
 
 **Goal**: Use `black` to format all `.py` files in a project.
+
+```bash
+#black . #Formats all files in folder, including subdirectories.
+# #Formats all .py files in folder.
+black bad_style.py
+black helper.py
+black problems.py
+black utils/alpha.py
+black utils/beta.py 
+```
 
 1. Inspect the remaining files and observe how they change after running black on the entire directory.
 
@@ -65,9 +84,17 @@ greet("world")
 
 1. Run `pylint` on `bad_style.py`.
 
+```bash
+pylint bad_style.py
+```
+
 ✅ *Check*: You'll receive a score and detailed output for code quality, style, and possible bugs.
 
 🎯 *Extra*:  Run pylint on the whole directory
+
+```bash
+pylint .
+```
 
 ---
 
@@ -77,10 +104,19 @@ greet("world")
 
 1. Run `mypy` on `bad_style.py` to check for type-related issues.
 
+```bash
+mypy bad_style.py
+```
+
 ✅ *Check*: You should see output indicating any type errors or warnings in the code.
 
 🎯 *Extra*: Try adding type hints to fix some of the errors and run mypy again.
 
+```python
+def get_length(items: list) -> str
+    count: str = str(len(items))
+    return count
+```
 ---
 
 ### Exercise 5: Format and Lint as a Pre-Commit Hook
@@ -91,7 +127,76 @@ First, read sections 1 through 7 of this [pre-commit guide](https://gist.github.
 
 1. Create a `.pre-commit-config.yaml` file with a configuration that includes the black formatter and mypy for type checking.
 
+```bash
+pre-commit {
+      'repos': [
+          {
+              "repo": "https://github.com/psf/black",
+                          "rev": "v26.5.1",
+                          "hooks": [
+                              {"id": "black"}
+                          ],
+                      },
+          {
+              "repo": "https://github.com/python/mypy",
+                          "rev": "v2.3.0",
+                          "hooks": [
+                              {"id": "mypy"}
+                          ],
+                      }
+                 ]} > .pre-commit-config.yaml
+```
+
+```bash
+#use a heredoc (cat >> 'EOF')
+cat << 'EOF' > .pre-commit-config.yaml
+repos:
+  - repo: https://github.com/psf/black
+    rev: 26.5.1
+    hooks:
+      - id: black
+  - repo: https://github.com/python/mypy
+    rev: v2.3.0
+    hooks:
+      - id: mypy
+EOF
+```
+
+```python
+#!pip install PyYAML
+import yaml
+
+data = {
+    "repos": [
+        {"repo": "https://github.com/psf/black", "rev": "26.5.1", "hooks": [{"id": "black"}]},
+        {"repo": "https://github.com/pre-commit/mirrors-mypy", "rev": "v2.3.0", "hooks": [{"id": "mypy"}]}
+    ]
+}
+
+with open(".pre-commit-config.yaml", "w") as f:
+    yaml.dump(data, f, sort_keys=False)
+```
+
 2. Install and run the pre-commit hooks. Note the output of the command.
+
+```bash
+# Verification Workflow
+#To verify your hook config end-to-end:
+#Validate config syntax:
+pre-commit validate-config .pre-commit-config.yaml
+```
+
+```bash
+#This automatically tests remote tags and replaces rev with the latest stable versions available on GitHub.
+pre-commit autoupdate
+```
+
+```bash
+pre-commit install
+pre-commit run --all-files
+```
+
+
 
 3. Run the hooks again, did the output change?
 
@@ -113,6 +218,59 @@ First, read sections 1 through 7 of this [pre-commit guide](https://gist.github.
    - `trailing-whitespace` and `end-of-file-fixer` from pre-commit-hooks
    - `check-yaml` and `check-json` for file validation
    - `codespell` for spelling checks
+
+```bash
+
+cat << 'EOF' > .pre-commit-config.yaml
+repos:
+  # General pre-commit hooks for whitespace, file fixing, and validation
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+
+  # Code formatting (Black)
+  - repo: https://github.com/psf/black
+    rev: 26.5.1
+    hooks:
+      - id: black
+
+  # Import sorting (isort)
+  - repo: https://github.com/pycqa/isort
+    rev: 9.0.0b2
+    hooks:
+      - id: isort
+
+  # Docstring formatting (docformatter)
+  - repo: https://github.com/PyCQA/docformatter
+    rev: v1.7.8
+    hooks:
+      - id: docformatter
+        args: [--in-place]
+
+  # Static type checking (mypy)
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v2.3.0
+    hooks:
+      - id: mypy
+
+  # Security checks (bandit)
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.9.4
+    hooks:
+      - id: bandit
+    args: ["-r", ".", "-x", "./venv,./.venv"]
+ 
+  # Spell checking (codespell)
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.4.3
+    hooks:
+      - id: codespell
+EOF
+```
 
 2. Reinstall the hooks to update them.
 

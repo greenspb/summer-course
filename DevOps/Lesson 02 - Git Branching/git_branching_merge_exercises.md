@@ -26,7 +26,10 @@ These exercises guide you through creating branches, merging them, resolving con
 
 
 ✅ *Check*: Use `git branch` to confirm you are now on `feature-a`.
-
+```bash
+git switch -c feature-a
+git branch
+```
 ---
 
 ### Exercise 2: Make a Change in the Feature Branch
@@ -35,7 +38,12 @@ These exercises guide you through creating branches, merging them, resolving con
 
 
 ✅ *Check*: Run `git log --oneline` to view the commit history.
-
+```bash
+echo "create a mock feature" > "notes.txt"
+git add .
+git commit -m "create feature-a branch with a mock feature in notes.txt"
+git log --oneline
+```
 ---
 
 ### Exercise 3: Switch Back to Main and Make a Change
@@ -44,7 +52,13 @@ These exercises guide you through creating branches, merging them, resolving con
 
 
 ✅ *Check*: View the file with `cat notes.txt`.
-
+```bash
+git checkout main
+echo "create a different mock feature" > "notes.txt"
+cat notes.txt
+git add .
+git commit -m "update main with a different mock feature in notes.txt"
+```
 ---
 
 ### Exercise 4: Merge Feature Branch into Main (Expect Conflict)
@@ -57,7 +71,9 @@ These exercises guide you through creating branches, merging them, resolving con
 
 Edit using your favorite text editor to combine or keep one version.
 
-
+```bash
+git merge feature-a
+```
 ---
 
 ### Exercise 5: Squash Merge a Feature Branch
@@ -66,7 +82,11 @@ Edit using your favorite text editor to combine or keep one version.
 
 
 ✅ *Check*: Only one commit should appear in the history after squashing.
-
+```bash
+git log --oneline
+git merge --squash feature-a -m "squash feature-a onto main" 
+git log --oneline
+```
 ---
 
 ### Exercise 6: Clean Up Merged Branches
@@ -75,7 +95,13 @@ Edit using your favorite text editor to combine or keep one version.
 
 
 ✅ *Check*: Run `git branch` to confirm deletion.
-
+```bash
+git log --oneline --all
+git branch -D feature-a
+git push origin --delete feature-a
+git branch
+git log --oneline --all
+```
 ## Hands-On #2: Merge Strategies
 
 ### Exercise 7: Use a Merge Strategy (`--no-ff`)
@@ -84,7 +110,12 @@ Edit using your favorite text editor to combine or keep one version.
 
 
 ✅ *Check*: `git log` should show a merge commit.
-
+```bash
+git switch -c git_branching_exercises_new_branch
+git commit --allow-empty -m "make empty commit to git_branching_exercises_new_branch"
+git switch main
+git merge --no-ff git_branching_exercises_new_branch -m "perform empty no-ff merge of git_branching_exercises_new_branch onto main"
+```
 ---
 
 ### Exercise 8: Fast-Forward Merge
@@ -93,7 +124,15 @@ Edit using your favorite text editor to combine or keep one version.
 
 
 ✅ *Check*: Run `git log --oneline` — no merge commit is created.
-
+```bash
+git log --oneline
+git switch -c git_branching_exercises_new_branch_2
+git commit --allow-empty -m "make empty commit 1 to git_branching_exercises_new_branch_2"
+git commit --allow-empty -m "make empty commit 2 to git_branching_exercises_new_branch_2"
+git switch main
+git merge --ff git_branching_exercises_new_branch_2 -m "perform empty ff merge of git_branching_exercises_new_branch_2 onto main"
+git log --oneline
+```
 ---
 
 ### Exercise 9: Rebase a Feature Branch
@@ -102,7 +141,16 @@ Edit using your favorite text editor to combine or keep one version.
 
 
 ✅ *Check*: The commit from `rebase-demo` will now appear after the `main` commit as if made later.
-
+```bash
+git log --oneline --graph
+git switch main
+git commit --allow-empty -m "new empty commit on main"
+git switch git_branching_exercises_new_branch 
+git commit --allow-empty -m "new empty commit on feature branch"
+git log --oneline --graph
+git rebase main
+git log --oneline --graph
+```
 ---
 
 ### Exercise 10: Squash Multiple Commits into One
@@ -111,7 +159,20 @@ Edit using your favorite text editor to combine or keep one version.
 
 
 ✅ *Check*: `git log` will show a single commit from the squash.
-
+```bash
+git log --oneline --graph
+git switch git_branching_exercises_new_branch_3
+echo "new feature 1 on git_branching_exercises_new_branch_3" >> notes.txt
+git commit -am "add feature 1"
+echo "new feature 2 on git_branching_exercises_new_branch_3" >> notes.txt
+git commit -am "add feature 2"
+echo "new feature 3 on git_branching_exercises_new_branch_3" >> notes.txt
+git commit -am "add feature 3"
+git switch main
+git merge --squash git_branching_exercises_new_branch_3
+git commit -m "squash git_branching_exercises_new_branch_3 onto main"
+git log --oneline --graph
+```
 ---
 
 ### Exercise 11: Rebase vs Merge – Compare Histories
@@ -120,3 +181,22 @@ Edit using your favorite text editor to combine or keep one version.
 
 
 ✅ *Check*: Use `git log --graph --oneline --all` to visually compare linear (rebase) vs. branched (merge) history.
+```bash
+git log --oneline --graph --all
+git switch -c git_branching_exercises_new_branch_4
+echo "new feature 1 on git_branching_exercises_new_branch_4" >> notes.txt
+git commit -am "add feature 1 on branch 4"
+echo "new feature 2 on git_branching_exercises_new_branch_4" >> notes.txt
+git commit -am "add feature 2 on branch 4"
+git branch main
+git switch -c git_branching_exercises_new_branch_5
+echo "new feature 1 on git_branching_exercises_new_branch_5" >> notes.txt
+git commit -am "add feature 1 on branch 5"
+echo "new feature 2 on git_branching_exercises_new_branch_5" >> notes.txt
+git commit -am "add feature 2 branch 5"
+git switch main
+git merge --no-ff git_branching_exercises_new_branch_5 -m "merge git_branching_exercises_new_branch_5 onto main"
+git switch git_branching_exercises_new_branch_4
+git rebase main
+git log --oneline --graph --all
+```

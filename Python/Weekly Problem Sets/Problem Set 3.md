@@ -38,6 +38,48 @@ Simulated average total: 13.47
 Theoretical average:     13.5
 ```
 
+```python
+import math, random
+def roll(sides):
+    return random.randint(1, sides)
+
+def roll_many(num_dice, sides):
+    return [roll(sides) for dice in range(num_dice)]
+
+def roll_stats(rolls_list):
+    return {'average': math.floor( sum(rolls_list)/len(rolls_list) * 10) / 10 , 'total': sum(rolls_list)}
+
+def is_crit(roll):
+    if roll == 20:
+        return (roll,'CRITICAL HIT!')
+    elif roll == 1:
+        return (roll,'CRITICAL MISS!')
+    else:
+        return (roll, ' ')
+
+r = roll_many(2,6)
+print('=== MOVEMENT CHECK (2d6) ===')
+print(f'Roll 1: {r[0]}   Roll 2: {r[1]}   Total: {roll_stats(r)['total']}')
+
+r = is_crit(roll(20))
+print('=== ATTACK CHECK (1d20) ===')
+print(f'Roll: {r[0]} — {r[1]}')
+  
+r = roll_many(3,6)
+print('=== DAMAGE ROLL (3d8) ===')
+print(f'Rolls: {r}   Total: {roll_stats(r)['total']}   Average: {roll_stats(r)['average']}')
+
+#damage loop
+total_history = []
+for i in range(1000):
+    r = roll_many(3,8)
+    total_history.append(roll_stats(r)['total'])
+
+print('=== SIMULATION (1000 damage rolls) ===')
+print(f'Simulated average total: {math.floor(sum(total_history)/len(total_history) * 100) / 100}')
+print('Theoretical average:     13.5')
+```
+
 ### Challenge
 
 Use `random.seed(42)` at the top of your program and run it twice. Notice that the results are identical both times — explain in a comment why this happens and when it might be useful. Then remove the seed and use `random.choice()` to pick a random battle quote from a list of at least five strings and print it at the end.
@@ -76,6 +118,32 @@ Kinetic energy (fuel):  1520100000000.0 J
 Log10 of velocity:      3.89
 ```
 
+```python
+import math
+def distance(x1, y1, x2, y2):
+    return math.sqrt( (x1-x2)**2 + (y1-y2)**2 )
+
+def orbit_circumference(radius):
+    return math.pi * 2 * radius
+
+def fuel_needed(mass, velocity):
+    return math.floor( 0.5 * mass * velocity ** 2 * 100) / 100
+
+ship_pos    = (0, 0)
+station_pos = (143, 892)
+orbit_radius = 6371        # km (Earth's radius)
+ship_mass    = 50000       # kg
+ship_velocity = 7800       # m/s
+
+distance(*ship_pos, *station_pos)
+
+print(f'=== NAVIGATION REPORT ===')
+print(f'Distance to station:    {distance(*ship_pos, *station_pos):.02f} units')
+print(f'Orbit circumference:    {orbit_circumference(orbit_radius):.02f} km')
+print(f'Kinetic energy (fuel):  {fuel_needed(ship_mass, ship_velocity):.02f} J')
+print(f'Log10 of velocity:      {math.log(ship_velocity, 10):.02f}')
+```
+
 ### Challenge
 
 Use `math.degrees()` and `math.radians()` to write a function `bearing(x1, y1, x2, y2)` that returns the angle in degrees from one point to another using `math.atan2()`. Print the bearing from the ship to the station. Then use `math.ceil()` and `math.floor()` on the distance result and explain the difference between them in a comment.
@@ -90,9 +158,25 @@ Use `math.degrees()` and `math.radians()` to write a function `bearing(x1, y1, x
 
 The `turtle` module lets you draw by moving a virtual "pen" around the screen. Here are the key commands you'll need:
 
+```bash
+#this block is not necessary
+#python -m venv venv_problem_set_3
+#source ./venv_problem_set_3/bin/activate
+#python --version
+#pip install turtle
+#pip list
+#pip freeze
+#pip freeze >> requirements.txt
+#deactivate
+#echo "venv_problem_set_3" >> .gitignore
+#git status
+#pip list
+#pip install -r .\requirements.txt
+#pip list
+```
+
 ```python
 import turtle
-
 t = turtle.Turtle()       # create a turtle to draw with
 t.forward(100)            # move forward 100 pixels
 t.right(90)               # turn right 90 degrees
@@ -122,6 +206,87 @@ turtle.done()             # keep the window open when finished
 
 **Expected result:** A simple nature scene with a sun, grass, a pond, and a row of trees.
 
+```python
+import turtle
+t = turtle.Turtle()       # create a turtle to draw with
+t.screen.bgcolor('#2afad4')
+t.speed(0)
+
+#yellow sun
+t.penup()                 # lift the pen (move without drawing)
+t.goto(775, 100)             # jump to a specific position
+t.pendown()               # put the pen down (start drawing)
+t.color("yellow")          # set the pen color
+t.fillcolor('yellow')
+t.begin_fill()            # start filling a shape
+t.circle(250)             # draw a circle with radius 250
+t.end_fill()              # fill the shape with the current color
+
+#green grass
+t.penup()                 # lift the pen (move without drawing)
+t.goto(-1000, -150)             # jump to a specific position
+t.pendown()               # put the pen down (start drawing)
+t.color('#6db409')          # set the pen color
+t.fillcolor('#6db409')
+t.begin_fill()            # start filling a shape
+t.forward(2000)            # move forward 100 pixels
+t.right(90)               # turn right 90 degrees
+t.forward(350)
+t.right(90)
+t.forward(2000)
+t.right(90)
+t.forward(350)
+t.end_fill()              # fill the shape with the current color
+
+#tree
+for i in range(3):
+    #tree trunk
+    x_offset = 175
+    y_scaler = 1.1
+    tree_height = 75
+    t.penup()                 # lift the pen (move without drawing)
+    t.goto(-800 + i*x_offset, -125)             # jump to a specific position
+    t.pendown()               # put the pen down (start drawing)
+    t.color("brown")          # set the pen color
+    t.fillcolor('brown')
+    t.begin_fill()            # start filling a shape
+    t.right(90)
+    t.forward(20)            # move forward 100 pixels
+    t.right(90)               # turn right 90 degrees
+    t.forward(75 * y_scaler * (i+1)**1.25)
+    t.right(90)
+    t.forward(20)
+    t.right(90)
+    t.forward(75 * y_scaler * (i+1)**1.25)
+    t.end_fill()              # fill the shape with the current color
+    #tree leaves
+    t.penup()                 # lift the pen (move without drawing)
+    tree_tops = (-740, -530, -340)
+    t.goto(tree_tops[i], -125)             # jump to a specific position
+    t.pendown()               # put the pen down (start drawing)
+    my_colors = ('green','#b46d09','#ec2910')
+    t.color(my_colors[i])          # set the pen color
+    t.fillcolor(my_colors[i])             #
+    t.begin_fill()            # start filling a shape
+    circle_sizes = (50,80,100)
+    t.circle(circle_sizes[i])             # draw a circle with radius 50
+    t.end_fill()              # fill the shape with the current color    
+
+#pond
+for x in range(512,587):
+    t.penup()                 # lift the pen (move without drawing)
+    t.goto(x, -310)             # jump to a specific position
+    t.pendown()               # put the pen down (start drawing)
+    my_color = 'blue'
+    t.color(my_color)          # set the pen color
+    t.fillcolor(my_color)             #'#32a8a4'
+    t.begin_fill()            # start filling a shape
+    t.circle(75)             # draw a circle with radius 50
+    t.end_fill()              # fill the shape with the current color
+
+t.done()
+```
+
 ### Challenge
 
 Add a `for` loop that uses `random.randint()` to place **10 trees** at random x-positions along the grass line, each with a randomly chosen height between 40 and 100 pixels. Import `random` alongside `turtle` to make this work. Make sure no tree is drawn off-screen by clamping the x-position within a safe range.
@@ -143,6 +308,27 @@ Add a `for` loop that uses `random.randint()` to place **10 trees** at random x-
   - If the distance is > 10, print `WARM`.
   - Otherwise print `HOT!`
 - When the player guesses correctly, print the number of guesses it took, and use `math.log2()` to print the "information-theoretic" minimum guesses needed (i.e. `math.ceil(math.log2(100))`). Add a comment explaining what this number means.
+
+```python
+import random, math
+secret_number = random.randint(1,100)
+guess = None
+guesses = 0
+while guess != secret_number:
+    guess = int(input("Guess the number between 1 and 100: "))
+    guesses += 1
+    distance = math.fabs(secret_number - guess)
+    if guess == secret_number:
+        print(f'You guessed correctly. It took you {guesses} guesses. Compare that to {math.ceil(math.log2(100))}, which is the "information-theoretic" minimum guesses if you receive feedback "higher" or "lower".')
+    elif distance > 40:
+        print('ICE COLD')
+    elif distance > 20:
+        print('COLD')
+    elif distance > 10:
+        print('WARM')
+    else:
+        print('HOT')
+```
 
 **Example run:**
 
@@ -195,7 +381,49 @@ after each full loop of 4 sides: the side length has grown
 - Use `turtle.done()` to keep the window open when finished.
  
 > **Hint:** Start with a side length of `10`. After each side, add `5`. With 10 laps that's 40 sides drawn, growing from length 10 up to 205.
- 
+
+```python
+import turtle
+t = turtle.Turtle()       # create a turtle to draw with
+t.speed(0)
+laps = int(input("How many times do you want to go around the square? "))
+t.color("green")          # set the pen color
+side_len = 400 / (2*laps)
+t.penup()
+t.goto(0,0)
+t.pendown()
+t.setheading(45)               # turn right 90 degrees
+t.forward(side_len / 2)
+sides_drawn = 0
+i = 1
+while (sides_drawn < laps * 4):
+    if sides_drawn % 2 == 0:
+        i += 1
+    sides_drawn += 1
+    t.right(90)               # turn right 90 degrees
+    t.forward(side_len * 2*i)            # move forward 100 pixels
+t.penup()
+
+# t = turtle.Turtle()       # create a turtle to draw with
+# t.speed(0)
+# laps = int(input("How many times do you want to go around the square? "))
+# t.color("green")          # set the pen color
+# side_len = 10
+# t.penup()
+# t.goto(0,0)
+# t.pendown()
+# t.setheading(45)               # turn right 90 degrees
+# t.forward(side_len / 2)
+# sides_drawn = 0
+# while (sides_drawn < laps * 4):
+#     t.right(90)               # turn right 90 degrees
+#     t.forward(side_len)            # move forward 100 pixels
+#     sides_drawn += 1
+#     side_len += 5
+# t.penup()
+# t.done()
+```
+
 **Example run:**
  
 ```
